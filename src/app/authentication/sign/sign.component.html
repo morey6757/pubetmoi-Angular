@@ -1,0 +1,30 @@
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+
+        <!-- Icon -->
+        <h1 class="h3 mb-3 font-weight-normal" style="text-align: center">Authentification</h1>
+
+        <!-- Login Form -->
+        <form [formGroup]="signForm" (ngSubmit)="onSubmitSignForm()">
+            <div class="form-group">
+                <input type="email" id="login" class="form-control fadeIn second" placeholder="exemple@exemple.com"
+                    formControlName="email">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" class="form-control fadeIn third"
+                    placeholder="Minimum 6 caractères" formControlName="password">
+            </div>
+            <Input *ngIf="paramSign == 'In'" type="submit" class="fadeIn fourth" [disabled]="signForm.invalid"
+                value="Connexion">
+            <Input *ngIf="paramSign == 'Up'" type="submit" class="fadeIn fourth" [disabled]="signForm.invalid"
+                value="Inscription">
+        </form>
+
+        <!-- Remind Passowrd -->
+        <div id="formFooter" *ngIf="paramSign == 'In'">
+            <a class="underlineHover" (click)="onPassword()">Mot de passe oublié</a>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,24 @@
+ng new pubetmoi --skipTests=true --style=css --routing=true
+
+ng serve
+
+npm i jquery popper.js bootstrap firebase
+
+
+polyfills.ts
+
+	import 'jquery';
+	import 'popper.js';
+	import 'bootstrap';
+	import 'firebase';
+
+angular.json
+
+            "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "src/styles.css"
+            ],
+
+ng serve
+
+ng generate component header

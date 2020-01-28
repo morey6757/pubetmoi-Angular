@@ -1,0 +1,179 @@
+<div class="rounded shadow bg-white p-5">
+    <div class="row">
+        <div class="col-12 d-flex">
+            <h2 class="font-weight-light"><i class="fas fa-walking"></i>Missions rémunératrices</h2>
+            <button class="btn btn-primary ml-auto" type="button" data-toggle="modal" data-target="#missionFormModal"
+                (click)="resetForm()"><i class="fas fa-plus"></i>Ajouter une mission</button>
+        </div>
+    </div>
+    <hr class="mt-1 mb-5 bg-dark">
+    <div class="row">
+        <div *ngFor="let mission of missions; let i = index" class="col-12 shadow-sm p-4 mb-3 bg-light">
+            <div class="row">
+                <div class="col-3">
+                    <img *ngIf="mission.photo && mission.photo !== ''" [src]="mission.photo" class="w-100">
+                </div>
+                <div class="col-9">
+                    <div class="d-flex">
+                        <h3 class="font-weight-normal">{{mission.titre}}</h3>
+                        <div class="ml-auto">
+                            <button class="btn btn-primary m-1" type="button" (click)="onEditMission(mission)"><i
+                                    class="fas fa-edit"></i></button>
+                            <button class="btn btn-danger m-1" type="button" (click)="onDeleteMission(i)"><i
+                                    class="fas fa-trash-alt"></i></button>
+                        </div>
+                    </div>
+                    <p>
+                        {{mission.type}}
+                    </p>
+                    <p>
+                        <span *ngIf="mission.pointsBonus" class="text-success">Rapporte des Points Bonus</span>
+                        <span *ngIf="!mission.pointsBonus" class="text-danger">Aucun Points Bonus</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Création / Modification -->
+<div class="modal fade" id="missionFormModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <form [formGroup]="missionsForm" (ngSubmit)="onSubmitMissionsForm()">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edition d'une mission</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!-- Titre -->
+                    <div class="form-group">
+                        <span class="text-danger">*</span>
+                        <input type="text" placeholder="Titre" class="form-control" formControlName="titre">
+                    </div>
+
+                    <!-- Enseigne -->
+                    <div class="form-group">
+                        <span class="text-danger">*</span>
+                        <input type="text" placeholder="Enseigne" class="form-control" formControlName="enseigne">
+                    </div>
+
+                    <!-- Type -->
+                    <div class="input-group mb-3">
+                        <span class="text-danger">*</span>
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Type de Mission</label>
+                        </div>
+                        <select class="custom-select" id="inputGroupSelect01" formControlName="type">
+                            <option selected>Sélectionner un Type de Mission</option>
+                            <option value="Vestimentaire">Vestimentaire</option>
+                            <option value="Marquage Automobile">Marquage Automobile</option>
+                            <option value="Distribution Flyer">Distribution Flyer</option>
+                            <option value="Street Marketing">Street Marketing</option>
+                        </select>
+                    </div>
+
+                    <!-- Emplacement -->
+                    <div class="form-group">
+                        <span class="text-danger">*</span>
+                        <input type="text" placeholder="Emplacement" class="form-control" formControlName="emplacement">
+                    </div>
+
+                    <!-- Campagne -->
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <span class="text-danger">*</span>
+                            <input type="date" placeholder="Date de Début" class="form-control"
+                                formControlName="dateDebut">
+                        </div>
+                        <div class="form-group col-6">
+                            <span class="text-danger">*</span>
+                            <input type="date" placeholder="Date de Fin" class="form-control" formControlName="dateFin">
+                        </div>
+                    </div>
+
+                    <!-- Gains -->
+                    <div class="form-row">
+                        <div class="form-group col-6">
+                            <span class="text-danger">*</span>
+                            <input type="text" placeholder="Gain par photo" class="form-control"
+                                formControlName="gainPhoto">
+                        </div>
+                        <div class="form-group col-6">
+                            <span class="text-danger">*</span>
+                            <input type="text" placeholder="Gain maximum" class="form-control"
+                                formControlName="gainMax">
+                        </div>
+                    </div>
+
+                    <!-- Détails -->
+                    <div class="form-group">
+                        <textarea class="form-control w-100" rows="4" placeholder="Détails"
+                            formControlName="details"></textarea>
+                    </div>
+
+                    <!-- Photo -->
+                    <div *ngIf="photoUrl && photoUrl !== ''" class="d-flex mb-3">
+                        <img [src]="photoUrl" class="w-50 mx-auto">
+                    </div>
+                    <div class="form-row">
+                        <div class="col-9">
+                            <div class="input-group mb-3">
+                                <div class="custom-file">
+                                    <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                        (change)="onUploadFile($event)">
+                                    <label class="custom-file-label" for="inputGroupFile01">Envoyer une image</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-3">
+                            <div class="spinner-border text-primary" *ngIf="photoUploading" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Points Bonus -->
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="customSwitch1"
+                            formControlName="pointsBonus">
+                        <label class="custom-control-label" for="customSwitch1">
+                            <span class="text-success" *ngIf="missionsForm.value.pointsBonus">Rapporte des Points
+                                Bonus</span>
+                            <span class="text-danger" *ngIf="!missionsForm.value.pointsBonus">Aucun Points Bonus</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class=" modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                    <button type="button" class="btn btn-primary" [disabled]="missionsForm.invalid"
+                        type="submit">Enregistrer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Suppression -->
+<div class="modal fade" id="deleteMissionModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Supprimer cette Mission ?</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuler</button>
+                <button type="button" class="btn btn-danger" (click)="onConfirmDeleteMission()">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
