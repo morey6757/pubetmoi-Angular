@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { icon, Marker } from 'leaflet';
 import { MarkerService } from '../services/marker.service';
+import { Coordonnees } from '../interfaces/coordonnees';
 
 const iconRetinaUrl = 'assets/images/marker-icon-2x.png';
 const iconUrl = 'assets/images/marker-icon.png';
@@ -17,6 +18,11 @@ const iconDefault = L.icon({
   tooltipAnchor: [16, -28],
   shadowSize: [41, 41]
 });
+const myIcon = L.icon({
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/images/marker-icon.png',
+  iconSize: [25, 41],
+  iconAnchor: [25, 41],
+});
 L.Marker.prototype.options.icon = iconDefault;
 
 @Component({
@@ -28,17 +34,23 @@ export class MapComponent implements OnInit {
 
   private map;
 
+  here: Coordonnees;
+
   constructor(private markerService: MarkerService) { }
 
   ngOnInit() {
+
+
+
     this.initMap();
-    //    this.markerService.makeCapitalMarkers(this.map);
     this.markerService.makeCapitalCircleMarkers(this.map);
 
-    navigator.geolocation.getCurrentPosition(position => {
-      console.log(position);
 
-    });
+
+
+  }
+
+  ngAfterViewChecked() {
 
   }
 
@@ -73,35 +85,47 @@ export class MapComponent implements OnInit {
 
     tiles.addTo(this.map);
 
-    const myIcon = L.icon({
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/images/marker-icon.png',
-      iconSize: [25, 41],
-      iconAnchor: [25, 41],
-    });
 
 
-    const iconRetinaUrl = 'assets/marker-icon-2x.png';
-    const iconUrl = 'assets/marker-icon.png';
-    const shadowUrl = 'assets/marker-shadow.png';
-    const iconDefault = L.icon({
-      iconRetinaUrl,
-      iconUrl,
-      shadowUrl,
-      iconSize: [25, 41],
-      iconAnchor: [12, 41],
-      popupAnchor: [1, -34],
-      tooltipAnchor: [16, -28],
-      shadowSize: [41, 41]
-    });
+
+
     L.Marker.prototype.options.icon = iconDefault;
 
     L.marker([43.3435407, 5.872256], { icon: myIcon }).bindPopup('Coca Cola').addTo(this.map);
     L.marker([43.1363597, 5.9159215], { icon: myIcon }).bindPopup('Orangina').addTo(this.map);
 
-
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(position => {
+        console.log(position);
+        L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici :-)').addTo(this.map);
+      });
+    } else {
+      alert("pas d'api de géolocalisation");
+    }
 
 
   }
 
 
 }
+
+
+/*
+// Fonction de callback en cas de succès
+function surveillePosition(position) {
+    var infopos = "Position déterminée :\n";
+    infopos += "Latitude : "+position.coords.latitude +"\n";
+    infopos += "Longitude: "+position.coords.longitude+"\n";
+    infopos += "Altitude : "+position.coords.altitude +"\n";
+    infopos += "Vitesse  : "+position.coords.speed +"\n";
+    document.getElementById("infoposition").innerHTML = infopos;
+}
+
+// On déclare la variable survId afin de pouvoir par la suite annuler le suivi de la position
+var survId = navigator.geolocation.watchPosition(surveillePosition);
+
+Pour stopper ce suivi continu, il faut réexploiter la variable obtenue (qui est en quelque sorte un pointeur vers le processus de suivi) avec la méthode clearWatch().
+
+// Annule le suivi de la position si nécessaire.
+navigator.geolocation.clearWatch(survId);
+*/
