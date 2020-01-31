@@ -22,3 +22,32 @@ angular.json
 ng serve
 
 ng generate component header
+
+git push -f origin master
+
+redirect https : .htaccess
+RewriteEngine On
+RewriteCond %{SERVER_PORT} !=443
+RewriteRule ^(.*)$ https://exemple.com/$1 [R=301,L]
+
+
+
+
+// FIREBASE HOSTING //
+// A ne faire qu'une fois :
+ firebase init
+	Hosting: Configure and deploy Firebase Hosting sites
+	Use an existing project
+	? What do you want to use as your public directory? dist/widebet
+	? Configure as a single-page app (rewrite all urls to /index.html)? Yes
+	? File dist/widebet/index.html already exists. Overwrite? No
+
+ng build --prod --aot
+
+firebase deploy
+
+
+
+Hosting :
+https://medium.com/@alansimpson/connect-your-domain-or-subdomain-to-firebase-hosting-365c721c395a
+https://blog.d2si.io/2018/10/11/site-statique-firebase-https/

@@ -4,6 +4,7 @@ import * as L from 'leaflet';
 import { icon, Marker } from 'leaflet';
 import { MarkerService } from '../services/marker.service';
 import { Coordonnees } from '../interfaces/coordonnees';
+import { LocationService } from '../services/location.service';
 
 const iconRetinaUrl = 'assets/images/marker-icon-2x.png';
 const iconUrl = 'assets/images/marker-icon.png';
@@ -35,12 +36,16 @@ export class MapComponent implements OnInit {
   private map;
 
   here: Coordonnees;
-
-  constructor(private markerService: MarkerService) { }
+  subscription: any;
+  val: string[] = [];
+  constructor(private markerService: MarkerService,
+    private locationService: LocationService) { }
 
   ngOnInit() {
 
-
+    this.val.push("a");
+    this.val.push("b");
+    this.val.push("c");
 
     this.initMap();
     this.markerService.makeCapitalCircleMarkers(this.map);
@@ -91,20 +96,27 @@ export class MapComponent implements OnInit {
 
     L.Marker.prototype.options.icon = iconDefault;
 
-    L.marker([43.3435407, 5.872256], { icon: myIcon }).bindPopup('Coca Cola').addTo(this.map);
-    L.marker([43.1363597, 5.9159215], { icon: myIcon }).bindPopup('Orangina').addTo(this.map);
+    L.marker([43.1363557, 5.8983259], { icon: myIcon }).bindPopup('Toulon').addTo(this.map);
+    L.marker([43.2803691, 5.3102854], { icon: myIcon }).bindPopup('Marseille').addTo(this.map);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        console.log(position);
-        L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici :-)').addTo(this.map);
-      });
+    // this.locationService.getLocation().subscribe(position => {
+    //   L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici :-)').addTo(this.map);
+    // });
+    if (window.navigator && window.navigator.geolocation) {
     } else {
-      alert("pas d'api de géolocalisation");
+      alert('Localisation impossible');
     }
+
+    this.locationService.getWatch().subscribe(position => {
+      L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici : ' + position.coords.latitude + position.coords.longitude).addTo(this.map);
+      // alert("Je suis ici: " + position.coords.latitude + " - " + position.coords.longitude);
+    });
+
 
 
   }
+
+
 
 
 }
