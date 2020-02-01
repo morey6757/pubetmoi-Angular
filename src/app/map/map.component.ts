@@ -37,22 +37,13 @@ export class MapComponent implements OnInit {
 
   here: Coordonnees;
   subscription: any;
-  val: string[] = [];
+
   constructor(private markerService: MarkerService,
     private locationService: LocationService) { }
 
   ngOnInit() {
-
-    this.val.push("a");
-    this.val.push("b");
-    this.val.push("c");
-
     this.initMap();
     this.markerService.makeCapitalCircleMarkers(this.map);
-
-
-
-
   }
 
   ngAfterViewChecked() {
