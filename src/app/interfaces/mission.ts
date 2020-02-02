@@ -9,5 +9,5 @@ export interface Mission {
     gainMax: number;
     details: string;
     pointsBonus: boolean;
-    photo?: string;
+    photos?: any[];
 }

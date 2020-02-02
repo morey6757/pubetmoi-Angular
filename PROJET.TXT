@@ -51,3 +51,7 @@ firebase deploy
 Hosting :
 https://medium.com/@alansimpson/connect-your-domain-or-subdomain-to-firebase-hosting-365c721c395a
 https://blog.d2si.io/2018/10/11/site-statique-firebase-https/
+
+
+git
+git push origin master --force

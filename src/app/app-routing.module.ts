@@ -5,13 +5,15 @@ import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard
 import { SignComponent } from './authentication/sign/sign.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { ContactComponent } from './contact/contact.component';
+import { SingleMissionComponent } from './single-mission/single-mission.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: '/home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
   { path: 'admin/dashboard', component: AdminDashboardComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'sign/:paramSign', component: SignComponent },
+  { path: 'mission/:id', component: SingleMissionComponent },
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: '**', component: NotfoundComponent }
 ];
 

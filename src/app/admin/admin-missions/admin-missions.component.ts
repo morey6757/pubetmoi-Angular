@@ -23,7 +23,7 @@ export class AdminMissionsComponent implements OnInit {
 
   photoUploading = false;
   photoUploaded = false;
-  photoUrl: string;
+  photosAdded: any[] = [];
 
   constructor(
     private formBuilder: FormBuilder,
@@ -59,7 +59,7 @@ export class AdminMissionsComponent implements OnInit {
   onSubmitMissionsForm() {
     const newMission: Mission = this.missionsForm.value;
     newMission.pointsBonus = this.missionsForm.get('pointsBonus').value ? this.missionsForm.get('pointsBonus').value : false;
-    newMission.photo = this.photoUrl ? this.photoUrl : '';
+    newMission.photos = this.photosAdded ? this.photosAdded : [];
     if (this.editMode) {
       this.missionsService.updateMission(newMission, this.indexToUpdate);
     }
@@ -72,7 +72,7 @@ export class AdminMissionsComponent implements OnInit {
   resetForm() {
     this.editMode = false;
     this.missionsForm.reset();
-    this.photoUrl = '';
+    this.photosAdded = [];
   }
 
   onDeleteMission(index) {
@@ -81,9 +81,11 @@ export class AdminMissionsComponent implements OnInit {
   }
 
   onConfirmDeleteMission() {
-    if (this.missions[this.indexToRemove].photo && this.missions[this.indexToRemove].photo !== '') {
-      this.missionsService.removeFile(this.missions[this.indexToRemove].photo);
-    }
+    this.missions[this.indexToRemove].photos.forEach(
+      (photo) => {
+        this.missionsService.removeFile(photo);
+      }
+    );
     this.missionsService.deleteMission(this.indexToRemove);
     $('#deleteMissionModal').modal('hide');
   }
@@ -99,9 +101,9 @@ export class AdminMissionsComponent implements OnInit {
     this.missionsForm.get('dateFin').setValue(mission.dateFin);
     this.missionsForm.get('gainPhoto').setValue(mission.gainPhoto);
     this.missionsForm.get('gainMax').setValue(mission.gainMax);
-    this.missionsForm.get('details').setValue(mission.details);
+    this.missionsForm.get('details').setValue(mission.details ? mission.details : '');
     this.missionsForm.get('pointsBonus').setValue(mission.pointsBonus);
-    this.photoUrl = mission.photo ? mission.photo : '';
+    this.photosAdded = mission.photos ? mission.photos : [];
     const index = this.missions.findIndex(
       (missionEl) => {
         if (missionEl === mission) {
@@ -116,10 +118,7 @@ export class AdminMissionsComponent implements OnInit {
     this.photoUploading = true;
     this.missionsService.uploadFile(event.target.files[0]).then(
       (url: string) => {
-        if (this.photoUrl && this.photoUrl !== '') {
-          this.missionsService.removeFile(this.photoUrl);
-        }
-        this.photoUrl = url;
+        this.photosAdded.push(url);
         this.photoUploading = false;
         this.photoUploaded = true;
         setTimeout(() => {
@@ -127,6 +126,11 @@ export class AdminMissionsComponent implements OnInit {
         }, 5000);
       }
     );
+  }
+
+  onRemoveAddedPhoto(index) {
+    this.missionsService.removeFile(this.photosAdded[index]);
+    this.photosAdded.splice(index, 1);
   }
 
 }

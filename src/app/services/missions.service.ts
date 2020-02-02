@@ -92,4 +92,20 @@ export class MissionsService {
 
   }
 
+  getSingleMission(id) {
+    return new Promise(
+      (resolve, reject) => {
+        firebase.database().ref('/missions/' + id).once('value').then(
+          (data) => {
+            resolve(data.val());
+          }
+        ).catch(
+          (error) => {
+            reject(error);
+          }
+        );
+      }
+    );
+  }
+
 }

@@ -15,6 +15,7 @@ import { NotfoundComponent } from './notfound/notfound.component';
 import { ContactComponent } from './contact/contact.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MapComponent } from './map/map.component';
+import { SingleMissionComponent } from './single-mission/single-mission.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { MapComponent } from './map/map.component';
     FooterComponent,
     NotfoundComponent,
     ContactComponent,
-    MapComponent
+    MapComponent,
+    SingleMissionComponent
   ],
   imports: [
     BrowserModule,

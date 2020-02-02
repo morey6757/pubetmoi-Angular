@@ -52,23 +52,6 @@ export class MapComponent implements OnInit {
 
   private initMap(): void {
 
-    /*
-    const map = L.map('map', {
-      center: [43.3435407, 5.872256],
-      zoom: 9,
-      attributionControl: false
-    });
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-
-    const myIcon = L.icon({
-      iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/images/marker-icon.png',
-      iconSize: [25, 41],
-      iconAnchor: [25, 41],
-    });
-    L.marker([43.3435407, 5.872256], { icon: myIcon }).bindPopup('Coca Cola').addTo(map);
-    L.marker([43.1363597, 5.9159215], { icon: myIcon }).bindPopup('Orangina').addTo(map);
-*/
     this.map = L.map('map', {
       center: [43.3435407, 5.872256],
       zoom: 9,
@@ -90,45 +73,11 @@ export class MapComponent implements OnInit {
     L.marker([43.1363557, 5.8983259], { icon: myIcon }).bindPopup('Toulon').addTo(this.map);
     L.marker([43.2803691, 5.3102854], { icon: myIcon }).bindPopup('Marseille').addTo(this.map);
 
-    // this.locationService.getLocation().subscribe(position => {
-    //   L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici :-)').addTo(this.map);
-    // });
-    if (window.navigator && window.navigator.geolocation) {
-    } else {
-      alert('Localisation impossible');
-    }
-
-    this.locationService.getWatch().subscribe(position => {
-      L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici : ' + position.coords.latitude + position.coords.longitude).addTo(this.map);
-      // alert("Je suis ici: " + position.coords.latitude + " - " + position.coords.longitude);
+    this.locationService.getLocation().subscribe(position => {
+      L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici :-)').addTo(this.map);
+      this.map.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 12);
     });
-
-
 
   }
 
-
-
-
 }
-
-
-/*
-// Fonction de callback en cas de succès
-function surveillePosition(position) {
-    var infopos = "Position déterminée :\n";
-    infopos += "Latitude : "+position.coords.latitude +"\n";
-    infopos += "Longitude: "+position.coords.longitude+"\n";
-    infopos += "Altitude : "+position.coords.altitude +"\n";
-    infopos += "Vitesse  : "+position.coords.speed +"\n";
-    document.getElementById("infoposition").innerHTML = infopos;
-}
-
-// On déclare la variable survId afin de pouvoir par la suite annuler le suivi de la position
-var survId = navigator.geolocation.watchPosition(surveillePosition);
-
-Pour stopper ce suivi continu, il faut réexploiter la variable obtenue (qui est en quelque sorte un pointeur vers le processus de suivi) avec la méthode clearWatch().
-
-// Annule le suivi de la position si nécessaire.
-navigator.geolocation.clearWatch(survId);
-*/
