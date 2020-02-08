@@ -18,7 +18,7 @@ export class HeaderComponent implements OnInit {
   constructor(private authenticationService: AuthenticationService,
     private usersService: UsersService,
     private router: Router,
-    private params: VariablesGlobales) { }
+    public params: VariablesGlobales) { }
 
   ngOnInit() {
     firebase.auth().onAuthStateChanged(

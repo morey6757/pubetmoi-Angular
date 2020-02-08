@@ -5,6 +5,8 @@ import { Router, ActivatedRoute, Params } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
 import { UserOld } from 'src/app/models/userold';
 import { VariablesGlobales } from 'src/app/models/variablesGlobales';
+import { BehaviorSubject } from 'rxjs';
+import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
   selector: 'app-sign',
@@ -24,7 +26,8 @@ export class SignComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private router: Router,
     private route: ActivatedRoute,
-    private params: VariablesGlobales
+    private params: VariablesGlobales,
+    private SpinnerService: NgxSpinnerService
   ) { }
 
   ngOnInit() {
@@ -43,15 +46,18 @@ export class SignComponent implements OnInit {
 
   onSubmitSignForm() {
     if (this.paramSign == 'In') {
+      this.SpinnerService.show();
       const email = this.signForm.get('email').value;
       const password = this.signForm.get('password').value;
       this.authenticationService.signInUser(email, password).then(
         (user: User) => {
+          this.SpinnerService.hide();
           this.params.isAdmin = user.admin;
           this.router.navigate(['/home']);
         }
       ).catch(
         (error) => {
+          this.SpinnerService.hide();
           switch (error.code) {
             case 'auth/user-not-found': {
               alert('Utilisateur incorrect');
@@ -69,6 +75,7 @@ export class SignComponent implements OnInit {
       );
     }
     else {
+      this.SpinnerService.show();
       const email = this.signForm.get('email').value;
       const password = this.signForm.get('password').value;
       this.user.admin = true;
@@ -76,12 +83,14 @@ export class SignComponent implements OnInit {
       console.log('user : ' + this.user);
       this.authenticationService.signUpUser(email, password, this.user).then(
         (uid) => {
+          this.SpinnerService.hide();
           console.log('uid : ' + uid);
           this.params.isAdmin = false;
           this.router.navigate(['/home']);
         }
       ).catch(
         (error) => {
+          this.SpinnerService.hide();
           switch (error.code) {
             case 'auth/email-already-in-use': {
               alert('Utilisateur déjà présent');

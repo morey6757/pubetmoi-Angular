@@ -71,7 +71,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private locationService: LocationService,
     private missionsService: MissionsService,
     private router: Router,
-    private elementRef: ElementRef,
+    private elementRef: ElementRef
   ) { }
 
   ngOnInit() {

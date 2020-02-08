@@ -17,6 +17,8 @@ import { HttpClientModule } from '@angular/common/http';
 import { MapComponent } from './map/map.component';
 import { SingleMissionComponent } from './single-mission/single-mission.component';
 import { VariablesGlobales } from './models/variablesGlobales';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -34,10 +36,12 @@ import { VariablesGlobales } from './models/variablesGlobales';
   ],
   imports: [
     BrowserModule,
+    BrowserAnimationsModule,
     AppRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    NgxSpinnerModule
   ],
   providers: [VariablesGlobales],
   bootstrap: [AppComponent]
