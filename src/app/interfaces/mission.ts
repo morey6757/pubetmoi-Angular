@@ -2,7 +2,8 @@ export interface Mission {
     titre: string;
     enseigne: string;
     type: string;
-    emplacement: string;
+    lat: number;
+    lng: number;
     dateDebut: string;
     dateFin: string;
     gainPhoto: number;

@@ -1,39 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MissionsService } from '../services/missions.service';
-import { Subscription } from 'rxjs';
-import { Mission } from 'src/app/interfaces/mission';
+import { VariablesGlobales } from '../models/variablesGlobales';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit, OnDestroy {
-
-  missions: Mission[] = [];
-  missionsSubscription: Subscription;
+export class HomeComponent implements OnInit {
 
   constructor(
-    private missionsService: MissionsService
+    private missionsService: MissionsService,
+    private params: VariablesGlobales
   ) { }
 
   ngOnInit() {
-    this.missionsSubscription = this.missionsService.missionsSubject.subscribe(
-      (data: any) => {
-        this.missions = data;
-      }
-    )
-    this.missionsService.emitMissions();
   }
 
-  getFinishValue(index) {
-    if (this.missions[index].pointsBonus)
-      return 'red';
-    else
-      return 'green';
-  }
-
-  ngOnDestroy() {
-    this.missionsSubscription.unsubscribe();
-  }
 }

@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
+import { User } from 'src/app/interfaces/user';
+import { UserOld } from 'src/app/models/userold';
+import { VariablesGlobales } from 'src/app/models/variablesGlobales';
 
 @Component({
   selector: 'app-sign',
@@ -14,11 +17,14 @@ export class SignComponent implements OnInit {
 
   paramSign: string;
 
+  user: User = { uid: '', name: '', admin: false };
+
   constructor(
     private formBuilder: FormBuilder,
     private authenticationService: AuthenticationService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private params: VariablesGlobales
   ) { }
 
   ngOnInit() {
@@ -40,9 +46,9 @@ export class SignComponent implements OnInit {
       const email = this.signForm.get('email').value;
       const password = this.signForm.get('password').value;
       this.authenticationService.signInUser(email, password).then(
-        (data) => {
-          console.log(data);
-          this.router.navigate(['/admin', 'dashboard']);
+        (user: User) => {
+          this.params.isAdmin = user.admin;
+          this.router.navigate(['/home']);
         }
       ).catch(
         (error) => {
@@ -65,10 +71,14 @@ export class SignComponent implements OnInit {
     else {
       const email = this.signForm.get('email').value;
       const password = this.signForm.get('password').value;
-      this.authenticationService.signUpUser(email, password).then(
-        (data) => {
-          console.log(data);
-          this.router.navigate(['/admin', 'dashboard']);
+      this.user.admin = true;
+      this.user.name = 'MoreY';
+      console.log('user : ' + this.user);
+      this.authenticationService.signUpUser(email, password, this.user).then(
+        (uid) => {
+          console.log('uid : ' + uid);
+          this.params.isAdmin = false;
+          this.router.navigate(['/home']);
         }
       ).catch(
         (error) => {

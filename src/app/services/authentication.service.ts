@@ -1,56 +1,61 @@
 import { Injectable } from '@angular/core';
+import { UsersService } from './users.service';
+import { User } from '../interfaces/user';
 import * as firebase from 'firebase';
-import { LoaderService } from './loader.service';
+import { VariablesGlobales } from '../models/variablesGlobales';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthenticationService {
 
-  constructor(private loaderService: LoaderService) { }
+  currentUser: User;
+
+  constructor(private usersService: UsersService) { }
 
   signInUser(email: string, password: string) {
-
-    this.loaderService.setLoading(true);
-
     return new Promise(
       (resolve, reject) => {
         firebase.auth().signInWithEmailAndPassword(email, password).then(
-          (data) => {
-            console.log('Connecté');
-            resolve(data);
+          userAuth => {
+            firebase.database().ref('/users/' + userAuth.user.uid + '/user').once('value').then(
+              (user) => {
+                resolve(user.val());
+              }
+            ).catch(
+              (error) => {
+                reject(error);
+              }
+            );
           }
         ).catch(
           (error) => {
             reject(error);
-          }
-        ).finally(
-          () => {
-            this.loaderService.setLoading(false);
           }
         )
       }
     );
   }
 
-  signUpUser(email: string, password: string) {
-
-    this.loaderService.setLoading(true);
-
+  signUpUser(email: string, password: string, user: User) {
     return new Promise(
       (resolve, reject) => {
         firebase.auth().createUserWithEmailAndPassword(email, password).then(
-          () => {
-            console.log('Enregistré');
-            resolve();
+          userAuth => {
+            user.uid = userAuth.user.uid;
+            firebase.database().ref('/users/' + userAuth.user.uid).set({ user }).then(
+              () => {
+                resolve(user.uid);
+              }
+            ).catch(
+              (error) => {
+                reject(error);
+              }
+            )
           }
         ).catch(
           (error) => {
             reject(error);
-          }
-        ).finally(
-          () => {
-            this.loaderService.setLoading(false);
           }
         )
       }
@@ -60,4 +65,5 @@ export class AuthenticationService {
   signOutUser() {
     firebase.auth().signOut();
   }
+
 }

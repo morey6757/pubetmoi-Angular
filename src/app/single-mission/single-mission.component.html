@@ -6,6 +6,7 @@
     <div class="row">
         <div class="col-md-6">
 
+            <!--
             <div *ngIf="mission.photos.length === 1">
                 <div *ngFor="let photo of mission.photos; let first = first">
                     <img [src]="photo" *ngIf="first" class="w-100">
@@ -32,7 +33,7 @@
                 </div>
 
             </div>
-
+-->
 
         </div>
         <div class="col-md-6">
@@ -42,3 +43,7 @@
         </div>
     </div>
 </div>
+
+<button class="btn btn-success" type="button" (click)="onBack()">
+    Page précédente
+</button>

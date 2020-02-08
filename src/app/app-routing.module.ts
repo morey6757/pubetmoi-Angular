@@ -6,10 +6,11 @@ import { SignComponent } from './authentication/sign/sign.component';
 import { NotfoundComponent } from './notfound/notfound.component';
 import { ContactComponent } from './contact/contact.component';
 import { SingleMissionComponent } from './single-mission/single-mission.component';
+import { AuthGuardService } from './services/auth-guard.service';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
-  { path: 'admin/dashboard', component: AdminDashboardComponent },
+  { path: 'admin/dashboard', canActivate: [AuthGuardService], component: AdminDashboardComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'sign/:paramSign', component: SignComponent },
   { path: 'mission/:id', component: SingleMissionComponent },

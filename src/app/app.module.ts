@@ -16,6 +16,7 @@ import { ContactComponent } from './contact/contact.component';
 import { HttpClientModule } from '@angular/common/http';
 import { MapComponent } from './map/map.component';
 import { SingleMissionComponent } from './single-mission/single-mission.component';
+import { VariablesGlobales } from './models/variablesGlobales';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,7 @@ import { SingleMissionComponent } from './single-mission/single-mission.componen
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [VariablesGlobales],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -13,7 +13,7 @@ export class NotfoundComponent implements OnInit {
   ngOnInit() {
   }
 
-  back() {
+  onBack() {
     this.location.back();
   }
 

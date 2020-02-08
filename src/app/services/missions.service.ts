@@ -9,10 +9,11 @@ import * as firebase from 'firebase';
 export class MissionsService {
 
   missions: Mission[] = [];
-
   missionsSubject = new Subject<Mission[]>();
 
-  constructor() { }
+  constructor() {
+    this.getMissions();
+  }
 
   emitMissions() {
     this.missionsSubject.next(this.missions);

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { NgForm, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { MissionsService } from 'src/app/services/missions.service';
 import { Subscription } from 'rxjs';
@@ -10,11 +10,11 @@ import { Mission } from 'src/app/interfaces/mission';
   templateUrl: './admin-missions.component.html',
   styleUrls: ['./admin-missions.component.css']
 })
-export class AdminMissionsComponent implements OnInit {
+export class AdminMissionsComponent implements OnInit, OnDestroy {
 
   missionsForm: FormGroup;
-  missionsSubscription: Subscription;
   missions: Mission[] = [];
+  missionsSubscription: Subscription;
 
   indexToRemove;
 
@@ -32,11 +32,11 @@ export class AdminMissionsComponent implements OnInit {
 
   ngOnInit() {
     this.initMissionsForm();
-    this.missionsService.missionsSubject.subscribe(
-      (data: Mission[]) => {
-        this.missions = data;
+    this.missionsSubscription = this.missionsService.missionsSubject.subscribe(
+      (missions: Mission[]) => {
+        this.missions = missions;
       }
-    );
+    )
     this.missionsService.getMissions();
     this.missionsService.emitMissions();
   }
@@ -46,7 +46,8 @@ export class AdminMissionsComponent implements OnInit {
       titre: ['', Validators.required],
       enseigne: ['', Validators.required],
       type: ['', Validators.required],
-      emplacement: ['', Validators.required],
+      lat: ['', Validators.required],
+      lng: ['', Validators.required],
       dateDebut: ['', Validators.required],
       dateFin: ['', Validators.required],
       gainPhoto: ['', Validators.required],
@@ -96,7 +97,8 @@ export class AdminMissionsComponent implements OnInit {
     this.missionsForm.get('titre').setValue(mission.titre);
     this.missionsForm.get('enseigne').setValue(mission.enseigne);
     this.missionsForm.get('type').setValue(mission.type);
-    this.missionsForm.get('emplacement').setValue(mission.emplacement);
+    this.missionsForm.get('lat').setValue(mission.lat);
+    this.missionsForm.get('lng').setValue(mission.lng);
     this.missionsForm.get('dateDebut').setValue(mission.dateDebut);
     this.missionsForm.get('dateFin').setValue(mission.dateFin);
     this.missionsForm.get('gainPhoto').setValue(mission.gainPhoto);
@@ -131,6 +133,10 @@ export class AdminMissionsComponent implements OnInit {
   onRemoveAddedPhoto(index) {
     this.missionsService.removeFile(this.photosAdded[index]);
     this.photosAdded.splice(index, 1);
+  }
+
+  ngOnDestroy() {
+    this.missionsSubscription.unsubscribe();
   }
 
 }

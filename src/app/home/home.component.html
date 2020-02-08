@@ -5,7 +5,7 @@
     </div>
 </div>
 
-<div class="card-deck">
+<div class="card-deck" *ngIf="!params.isLoggedIn">
     <div class="card">
         <img class="card-img-top w-50 mx-auto" src="assets/shirt.jpeg">
         <div class="card-body">
@@ -51,4 +51,6 @@
     </div>
 </div>
 
-<app-map></app-map>
+<div *ngIf="params.isLoggedIn">
+    <app-map></app-map>
+</div>

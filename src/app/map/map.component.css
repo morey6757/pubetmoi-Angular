@@ -12,4 +12,10 @@
     margin-left: auto;
     margin-right: auto;
     width: 50%;
-  }
+}
+
+.custom .leaflet-popup-tip,
+.custom .leaflet-popup-content-wrapper {
+    background: #e93434;
+    color: #ffffff;
+}

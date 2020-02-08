@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-
+import { Component, OnInit, Input, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
 import * as L from 'leaflet';
-import { icon, Marker } from 'leaflet';
-import { MarkerService } from '../services/marker.service';
-import { Coordonnees } from '../interfaces/coordonnees';
 import { LocationService } from '../services/location.service';
+import { Mission } from '../interfaces/mission';
+import { Subscription } from 'rxjs';
+import { MissionsService } from '../services/missions.service';
+import { Router } from '@angular/router';
+import { Location } from '@angular/common';
 
 const iconRetinaUrl = 'assets/images/marker-icon-2x.png';
 const iconUrl = 'assets/images/marker-icon.png';
@@ -23,6 +24,7 @@ const myIcon = L.icon({
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.2.0/images/marker-icon.png',
   iconSize: [25, 41],
   iconAnchor: [25, 41],
+  popupAnchor: [0, -75]
 });
 L.Marker.prototype.options.icon = iconDefault;
 
@@ -31,23 +33,97 @@ L.Marker.prototype.options.icon = iconDefault;
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, OnDestroy {
+
+  flyerIcon = L.icon({
+    iconUrl: './assets/icones/icons8-boîte-aux-lettres-fermée-vide-24.png',
+    iconSize: [24, 24],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -20]
+  });
+  casquetteIcon = L.icon({
+    iconUrl: './assets/icones/icons8-casquette-de-baseball-24.png',
+    iconSize: [24, 24],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -20]
+  });
+  shirtIcon = L.icon({
+    iconUrl: './assets/icones/icons8-t-shirt-24.png',
+    iconSize: [24, 24],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -20]
+  });
+  voitureIcon = L.icon({
+    iconUrl: './assets/icones/icons8-voiture-24.png',
+    iconSize: [24, 24],
+    iconAnchor: [24, 24],
+    popupAnchor: [0, -20]
+  });
+
+  missions: Mission[] = [];
+  missionsSubscription: Subscription;
 
   private map;
 
-  here: Coordonnees;
   subscription: any;
 
-  constructor(private markerService: MarkerService,
-    private locationService: LocationService) { }
+  constructor(
+    private locationService: LocationService,
+    private missionsService: MissionsService,
+    private router: Router,
+    private elementRef: ElementRef,
+  ) { }
 
   ngOnInit() {
     this.initMap();
-    this.markerService.makeCapitalCircleMarkers(this.map);
-  }
+    this.missionsSubscription = this.missionsService.missionsSubject.subscribe(
+      (missions: Mission[]) => {
+        this.missions = missions;
+        this.missions.forEach(
+          (mission, index) => {
+            let html: string = `
+            <div align='center'>
+            <a class="btn btn-primary button-raised partner-link">coucou</a>
+              <p style='font-size:14px;margin: 5px'>hello world</p>
+              <img style="height: 100px; width: 170px; margin: 0" src="./assets/icones/icons8-t-shirt-24.png">
+              <p style="margin:5px;font-style:italic">youpi</p>
+              <a class="merch-link" data-merchId="`+ index + `">Détails de la mission</a>
+            </div>
+          <center>"` + mission.titre + `"<br>pour l'enseigne "` + mission.enseigne + `"<br><button mat-raised-button color='primary'>détails</button></center>`;
+            let mark: any[] = [];
+            switch (mission.type) {
+              case 'Vestimentaire':
+                mark[index] = L.marker([mission.lat, mission.lng], { icon: this.shirtIcon }).bindPopup(html).addTo(this.map);
+                let self = this;
+                break;
+              case 'Marquage Automobile':
+                mark[index] = L.marker([mission.lat, mission.lng], { icon: this.voitureIcon }).bindPopup(html).addTo(this.map);
+                break;
+              case 'Distribution Flyer':
+                mark[index] = L.marker([mission.lat, mission.lng], { icon: this.flyerIcon }).bindPopup(html).addTo(this.map);
+                break;
+              case 'Street Marketing':
+                mark[index] = L.marker([mission.lat, mission.lng], { icon: this.casquetteIcon }).bindPopup(html).addTo(this.map);
+                break;
+            }
+            let self = this;
+            mark[index].on('popupopen', function () {
+              // add event listener to newly added a.merch-link element
+              self.elementRef.nativeElement.querySelector(".merch-link")
+                .addEventListener('click', (e) => {
+                  // get id from attribute
+                  var merchId = e.target.getAttribute("data-merchId");
+                  self.goToMission(merchId)
+                });
+            });
 
-  ngAfterViewChecked() {
 
+          }
+        );
+      }
+    )
+
+    this.missionsService.emitMissions();
   }
 
   private initMap(): void {
@@ -57,6 +133,7 @@ export class MapComponent implements OnInit {
       zoom: 9,
       attributionControl: false
     });
+
     const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -64,20 +141,47 @@ export class MapComponent implements OnInit {
 
     tiles.addTo(this.map);
 
-
-
-
-
     L.Marker.prototype.options.icon = iconDefault;
 
-    L.marker([43.1363557, 5.8983259], { icon: myIcon }).bindPopup('Toulon').addTo(this.map);
-    L.marker([43.2803691, 5.3102854], { icon: myIcon }).bindPopup('Marseille').addTo(this.map);
-
     this.locationService.getLocation().subscribe(position => {
-      L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup('Je suis ici :-)').addTo(this.map);
-      this.map.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 12);
+      //L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindTooltip('Je suis ici :-)').addTo(this.map);
+
+      var marker = L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup(`
+      <div align='center'>
+      <a class="btn btn-primary button-raised partner-link">coucou</a>
+        <p style='font-size:14px;margin: 5px'>hello world</p>
+        <img style="height: 100px; width: 170px; margin: 0" src="./assets/icones/icons8-t-shirt-24.png">
+        <p style="margin:5px;font-style:italic">youpi</p>
+        <a class="merch-link" data-merchId="0">Détails de la mission</a>
+      </div>
+    `).addTo(this.map);
+
+      this.map.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 7);
+
+
+
+
     });
+
+
+
 
   }
 
+  ngOnDestroy() {
+    this.missionsSubscription.unsubscribe();
+  }
+
+  goToMission(id) {
+    //this.navCtrl.push(MerchantPage, { merchantId: merchantId });
+    console.log("going to mission " + id)
+    this.router.navigate(['/mission', id]);
+  }
+
 }
+
+/*
+
+
+
+*/

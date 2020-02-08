@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { VariablesGlobales } from 'src/app/models/variablesGlobales';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -7,9 +9,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AdminDashboardComponent implements OnInit {
 
-  constructor() { }
+  constructor(private params: VariablesGlobales,
+    private location: Location) { }
 
   ngOnInit() {
+    if (!this.params.isAdmin)
+      this.location.back();
   }
 
 }
