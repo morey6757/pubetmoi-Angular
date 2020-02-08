@@ -122,7 +122,7 @@ export class MapComponent implements OnInit, OnDestroy {
         );
       }
     )
-
+    this.missionsService.getMissions();
     this.missionsService.emitMissions();
   }
 
