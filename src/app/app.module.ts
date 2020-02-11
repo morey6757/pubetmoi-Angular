@@ -19,6 +19,8 @@ import { SingleMissionComponent } from './single-mission/single-mission.componen
 import { VariablesGlobales } from './models/variablesGlobales';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { CreationComponent } from './missions/creation/creation.component';
+import { VisualisationComponent } from './missions/visualisation/visualisation.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     NotfoundComponent,
     ContactComponent,
     MapComponent,
-    SingleMissionComponent
+    SingleMissionComponent,
+    CreationComponent,
+    VisualisationComponent
   ],
   imports: [
     BrowserModule,

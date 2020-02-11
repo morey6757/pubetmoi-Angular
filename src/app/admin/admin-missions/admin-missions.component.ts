@@ -4,6 +4,7 @@ import { MissionsService } from 'src/app/services/missions.service';
 import { Subscription } from 'rxjs';
 import * as $ from 'jquery';
 import { Mission } from 'src/app/interfaces/mission';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-missions',
@@ -27,7 +28,8 @@ export class AdminMissionsComponent implements OnInit, OnDestroy {
 
   constructor(
     private formBuilder: FormBuilder,
-    private missionsService: MissionsService
+    private missionsService: MissionsService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -137,6 +139,10 @@ export class AdminMissionsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.missionsSubscription.unsubscribe();
+  }
+
+  onCreate() {
+    this.router.navigate(['mission/creation']);
   }
 
 }

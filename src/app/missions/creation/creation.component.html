@@ -1,0 +1,137 @@
+<ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+    <p style="color: white">Veuillez patienter</p>
+</ngx-spinner>
+<div class="container">
+    <form [formGroup]="missionsForm" (ngSubmit)="onSubmitMissionsForm()">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLongTitle">Création d'une nouvelle Mission</h5>
+        </div>
+        <div class="modal-body">
+
+            <!-- Titre -->
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <input type="text" placeholder="Titre" class="form-control" formControlName="titre">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <!-- Enseigne -->
+                    <div class="input-group mb-3" style="flex-direction: column;">
+                        <span class="text-danger">*</span>
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Enseigne</label>
+                        </div>
+                        <select class="selectpicker" id="inputGroupSelect01" formControlName="enseigne">
+                            <option>Auchan</option>
+                            <option>Ribeirou</option>
+                            <option>Norauto</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group col-6">
+                    <!-- Type -->
+                    <div class="input-group mb-3" style="flex-direction: column;">
+                        <span class="text-danger">*</span>
+                        <div class="input-group-prepend">
+                            <label class="input-group-text" for="inputGroupSelect01">Type de Mission</label>
+                        </div>
+                        <select class="selectpicker" id="inputGroupSelect01" formControlName="type">
+                            <option>Vestimentaire</option>
+                            <option>Marquage Automobile</option>
+                            <option>Distribution Flyer</option>
+                            <option>Street Marketing</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <app-map (coordonnees)="recupCoord($event)" [isHome]="isHome"></app-map>
+
+            <div class="form-row">
+                <!-- lat / lng -->
+                <div class="form-group col-6">
+                    <span class="text-danger">*</span>
+                    <input type="text" placeholder="latitude" class="form-control" formControlName="lat">
+                </div>
+                <div class="form-group col-6">
+                    <span class="text-danger">*</span>
+                    <input type="text" placeholder="longitude" class="form-control" formControlName="lng">
+                </div>
+            </div>
+
+            <!-- Campagne -->
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <span class="text-danger">*</span>
+                    <input type="date" placeholder="Date de Début" class="form-control" formControlName="dateDebut">
+                </div>
+                <div class="form-group col-6">
+                    <span class="text-danger">*</span>
+                    <input type="date" placeholder="Date de Fin" class="form-control" formControlName="dateFin">
+                </div>
+            </div>
+
+            <!-- Gains -->
+            <div class="form-row">
+                <div class="form-group col-6">
+                    <span class="text-danger">*</span>
+                    <input type="text" placeholder="Gain par photo" class="form-control" formControlName="gainPhoto">
+                </div>
+                <div class="form-group col-6">
+                    <span class="text-danger">*</span>
+                    <input type="text" placeholder="Gain maximum" class="form-control" formControlName="gainMax">
+                </div>
+            </div>
+
+            <!-- Détails -->
+            <div class="form-group">
+                <span class="text-danger">*</span>
+                <textarea class="form-control w-100" rows="4" placeholder="Détails"
+                    formControlName="details"></textarea>
+            </div>
+
+            <!-- Photo -->
+            <div class="row">
+                <div *ngFor="let photo of photosAdded; let i = index"
+                    class="col-2 border border-secondary rounded m-1 p-1 bg-light position-relative">
+                    <span class="text-danger position-absolute mr-1 deletePhoto" (click)="onRemoveAddedPhoto(i)">
+                        <i class="fas fa-times"></i>
+                    </span>
+                    <img [src]="photo" class="w-100">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="col-9">
+                    <div class="input-group mb-3">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01"
+                                (change)="onUploadFile($event)">
+                            <label class="custom-file-label" for="inputGroupFile01">Envoyer une image</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="spinner-border text-primary" *ngIf="photoUploading" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Points Bonus -->
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="customSwitch1" formControlName="pointsBonus">
+                <label class="custom-control-label" for="customSwitch1">
+                    <span class="text-success" *ngIf="missionsForm.value.pointsBonus">Rapporte des Points
+                        Bonus</span>
+                    <span class="text-danger" *ngIf="!missionsForm.value.pointsBonus">Aucun Points Bonus</span>
+                </label>
+            </div>
+        </div>
+
+        <div class=" modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="onReturn()">Annuler</button>
+            <button type="button" class="btn btn-primary" [disabled]="missionsForm.invalid"
+                type="submit">Enregistrer</button>
+        </div>
+    </form>
+</div>

@@ -1,11 +1,11 @@
-import { Component, OnInit, Input, OnDestroy, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, ElementRef, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import * as L from 'leaflet';
 import { LocationService } from '../services/location.service';
 import { Mission } from '../interfaces/mission';
 import { Subscription } from 'rxjs';
 import { MissionsService } from '../services/missions.service';
 import { Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { NgxSpinnerService } from "ngx-spinner";
 
 const iconRetinaUrl = 'assets/images/marker-icon-2x.png';
 const iconUrl = 'assets/images/marker-icon.png';
@@ -34,6 +34,12 @@ L.Marker.prototype.options.icon = iconDefault;
   styleUrls: ['./map.component.css']
 })
 export class MapComponent implements OnInit, OnDestroy {
+
+  latitude: number;
+  longitude: number;
+
+  @Input() isHome: boolean;
+  @Output() coordonnees = new EventEmitter<any>();
 
   flyerIcon = L.icon({
     iconUrl: './assets/icones/icons8-boîte-aux-lettres-fermée-vide-24.png',
@@ -71,25 +77,35 @@ export class MapComponent implements OnInit, OnDestroy {
     private locationService: LocationService,
     private missionsService: MissionsService,
     private router: Router,
-    private elementRef: ElementRef
+    private elementRef: ElementRef,
+    private changeDetector: ChangeDetectorRef,
+    private SpinnerService: NgxSpinnerService
   ) { }
 
   ngOnInit() {
     this.initMap();
+    this.initPosition();
+    if (this.isHome) {
+      this.getMission();
+    }
+  }
+
+  getMission() {
+    this.SpinnerService.show();
     this.missionsSubscription = this.missionsService.missionsSubject.subscribe(
       (missions: Mission[]) => {
         this.missions = missions;
         this.missions.forEach(
           (mission, index) => {
             let html: string = `
-            <div align='center'>
-            <a class="btn btn-primary button-raised partner-link">coucou</a>
-              <p style='font-size:14px;margin: 5px'>hello world</p>
-              <img style="height: 100px; width: 170px; margin: 0" src="./assets/icones/icons8-t-shirt-24.png">
-              <p style="margin:5px;font-style:italic">youpi</p>
-              <a class="merch-link" data-merchId="`+ index + `">Détails de la mission</a>
-            </div>
-          <center>"` + mission.titre + `"<br>pour l'enseigne "` + mission.enseigne + `"<br><button mat-raised-button color='primary'>détails</button></center>`;
+          <div align='center'>
+          <a class="btn btn-primary button-raised partner-link">coucou</a>
+            <p style='font-size:14px;margin: 5px'>hello world</p>
+            <img style="height: 100px; width: 170px; margin: 0" src="./assets/icones/icons8-t-shirt-24.png">
+            <p style="margin:5px;font-style:italic">youpi</p>
+            <a class="merch-link" data-merchId="`+ index + `">Détails de la mission</a>
+          </div>
+        <center>"` + mission.titre + `"<br>pour l'enseigne "` + mission.enseigne + `"<br><button mat-raised-button color='primary'>détails</button></center>`;
             let mark: any[] = [];
             switch (mission.type) {
               case 'Vestimentaire':
@@ -116,18 +132,16 @@ export class MapComponent implements OnInit, OnDestroy {
                   self.goToMission(merchId)
                 });
             });
-
-
           }
         );
+        this.SpinnerService.hide();
       }
     )
     this.missionsService.getMissions();
     this.missionsService.emitMissions();
   }
 
-  private initMap(): void {
-
+  initMap(): void {
     this.map = L.map('map', {
       center: [43.3435407, 5.872256],
       zoom: 9,
@@ -142,11 +156,14 @@ export class MapComponent implements OnInit, OnDestroy {
     tiles.addTo(this.map);
 
     L.Marker.prototype.options.icon = iconDefault;
+  }
 
+  initPosition() {
     this.locationService.getLocation().subscribe(position => {
       //L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindTooltip('Je suis ici :-)').addTo(this.map);
 
-      var marker = L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup(`
+      if (this.isHome) {
+        var marker = L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon }).bindPopup(`
       <div align='center'>
       <a class="btn btn-primary button-raised partner-link">coucou</a>
         <p style='font-size:14px;margin: 5px'>hello world</p>
@@ -155,21 +172,35 @@ export class MapComponent implements OnInit, OnDestroy {
         <a class="merch-link" data-merchId="0">Détails de la mission</a>
       </div>
     `).addTo(this.map);
+      }
+      else {
+        var marker = L.marker([position.coords.latitude, position.coords.longitude], { icon: myIcon, draggable: true }).bindPopup(`
+      <div align='center'>
+      <a class="btn btn-primary button-raised partner-link">coucou</a>
+        <p style='font-size:14px;margin: 5px'>hello world</p>
+        <img style="height: 100px; width: 170px; margin: 0" src="./assets/icones/icons8-t-shirt-24.png">
+        <p style="margin:5px;font-style:italic">youpi</p>
+        <a class="merch-link" data-merchId="0">Détails de la mission</a>
+      </div>
+    `).addTo(this.map);
+        marker.on('dragend', () => {
+          this.changeDetector.detectChanges();
+          this.coordonnees.emit([marker.getLatLng().lat, marker.getLatLng().lng]);
+        });
+        this.coordonnees.emit([marker.getLatLng().lat, marker.getLatLng().lng]);
+      }
 
+      /*
+      marker.on('dragend', function (e) {
+        alert(marker.getLatLng().lat + ' - ' + marker.getLatLng().lng);
+      });*/
       this.map.setView(new L.LatLng(position.coords.latitude, position.coords.longitude), 7);
-
-
-
-
     });
-
-
-
-
   }
 
   ngOnDestroy() {
-    this.missionsSubscription.unsubscribe();
+    if (this.isHome)
+      this.missionsSubscription.unsubscribe();
   }
 
   goToMission(id) {
@@ -179,9 +210,3 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
 }
-
-/*
-
-
-
-*/

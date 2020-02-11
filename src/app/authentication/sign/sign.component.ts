@@ -3,9 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { User } from 'src/app/interfaces/user';
-import { UserOld } from 'src/app/models/userold';
 import { VariablesGlobales } from 'src/app/models/variablesGlobales';
-import { BehaviorSubject } from 'rxjs';
 import { NgxSpinnerService } from "ngx-spinner";
 
 @Component({
@@ -78,7 +76,7 @@ export class SignComponent implements OnInit {
       this.SpinnerService.show();
       const email = this.signForm.get('email').value;
       const password = this.signForm.get('password').value;
-      this.user.admin = true;
+      this.user.admin = false;
       this.user.name = 'MoreY';
       console.log('user : ' + this.user);
       this.authenticationService.signUpUser(email, password, this.user).then(
