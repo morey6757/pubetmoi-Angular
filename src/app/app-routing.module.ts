@@ -8,11 +8,15 @@ import { ContactComponent } from './contact/contact.component';
 import { SingleMissionComponent } from './single-mission/single-mission.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { CreationComponent } from './missions/creation/creation.component';
+import { UserCreationComponent } from './users/user-creation/user-creation.component';
+import { UserProfilComponent } from './users/user-profil/user-profil.component';
 
 const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'admin/dashboard', canActivate: [AuthGuardService], component: AdminDashboardComponent },
   { path: 'mission/creation', canActivate: [AuthGuardService], component: CreationComponent },
+  { path: 'user/creation', component: UserCreationComponent },
+  { path: 'user/profil', component: UserProfilComponent },
   { path: 'contact', component: ContactComponent },
   { path: 'sign/:paramSign', component: SignComponent },
   { path: 'mission/:id', component: SingleMissionComponent },

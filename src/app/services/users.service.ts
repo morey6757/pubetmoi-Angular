@@ -26,4 +26,23 @@ export class UsersService {
     );
   }
 
+  updateUser(user: User) {
+    return new Promise(
+      (resolve, reject) => {
+        firebase.database().ref('/users/' + user.uid + '/user').update({
+          titre: user.titre, nom: user.nom, prenom: user.prenom,
+          telephone: user.telephone, dateNaissance: user.dateNaissance, iban: user.iban, notificationSms: user.notificationSMS
+        }).then(
+          () => {
+            resolve();
+          }
+        ).catch(
+          (error) => {
+            reject(error);
+          }
+        );
+      }
+    );
+  }
+
 }

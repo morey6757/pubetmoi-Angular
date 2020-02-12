@@ -132,9 +132,9 @@ export class MapComponent implements OnInit, OnDestroy {
                   self.goToMission(merchId)
                 });
             });
+            this.SpinnerService.hide();
           }
         );
-        this.SpinnerService.hide();
       }
     )
     this.missionsService.getMissions();

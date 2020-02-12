@@ -13,7 +13,7 @@ export class AdminDashboardComponent implements OnInit {
     private location: Location) { }
 
   ngOnInit() {
-    if (!this.params.isAdmin)
+    if (!this.params.user.isAdmin)
       this.location.back();
   }
 

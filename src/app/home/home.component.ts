@@ -9,11 +9,11 @@ import { VariablesGlobales } from '../models/variablesGlobales';
 })
 export class HomeComponent implements OnInit {
 
-  isHome:boolean=true;
-  
+  isHome: boolean = true;
+
   constructor(
     private missionsService: MissionsService,
-    public params: VariablesGlobales
+    private params: VariablesGlobales
   ) { }
 
   ngOnInit() {

@@ -14,10 +14,8 @@ import { NgxSpinnerService } from "ngx-spinner";
 export class SignComponent implements OnInit {
 
   signForm: FormGroup;
-
+  user: User;
   paramSign: string;
-
-  user: User = { uid: '', name: '', admin: false };
 
   constructor(
     private formBuilder: FormBuilder,
@@ -50,7 +48,7 @@ export class SignComponent implements OnInit {
       this.authenticationService.signInUser(email, password).then(
         (user: User) => {
           this.SpinnerService.hide();
-          this.params.isAdmin = user.admin;
+          this.params.user = user;
           this.router.navigate(['/home']);
         }
       ).catch(
@@ -63,35 +61,6 @@ export class SignComponent implements OnInit {
             }
             case 'auth/wrong-password': {
               alert('Mot de passe incorrect');
-              break;
-            }
-            default: {
-              alert(error);
-            }
-          }
-        }
-      );
-    }
-    else {
-      this.SpinnerService.show();
-      const email = this.signForm.get('email').value;
-      const password = this.signForm.get('password').value;
-      this.user.admin = false;
-      this.user.name = 'MoreY';
-      console.log('user : ' + this.user);
-      this.authenticationService.signUpUser(email, password, this.user).then(
-        (uid) => {
-          this.SpinnerService.hide();
-          console.log('uid : ' + uid);
-          this.params.isAdmin = false;
-          this.router.navigate(['/home']);
-        }
-      ).catch(
-        (error) => {
-          this.SpinnerService.hide();
-          switch (error.code) {
-            case 'auth/email-already-in-use': {
-              alert('Utilisateur déjà présent');
               break;
             }
             default: {

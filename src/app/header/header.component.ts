@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { UsersService } from '../services/users.service';
 import { User } from '../interfaces/user';
 import { VariablesGlobales } from '../models/variablesGlobales';
+import { UserCreationComponent } from '../users/user-creation/user-creation.component';
 
 @Component({
   selector: 'app-header',
@@ -18,22 +19,16 @@ export class HeaderComponent implements OnInit {
   constructor(private authenticationService: AuthenticationService,
     private usersService: UsersService,
     private router: Router,
-    public params: VariablesGlobales) { }
+    private params: VariablesGlobales) { }
 
   ngOnInit() {
     firebase.auth().onAuthStateChanged(
       (userSession) => {
         if (userSession) {
-
           this.params.isLoggedIn = true;
           this.usersService.getUser(userSession.uid).then(
             (user: User) => {
-              if (user.admin === true) {
-                this.params.isAdmin = true;
-              }
-              else {
-                this.params.isAdmin = false;
-              }
+              this.params.user = user;
             }
           ).catch(
             (error) => {
@@ -57,7 +52,7 @@ export class HeaderComponent implements OnInit {
         }
         else {
           this.params.isLoggedIn = false;
-          this.params.isAdmin = false;
+          this.params.user = { uid: '', email: '', isAdmin: false, titre: '', nom: '', prenom: '', dateNaissance: new Date(), telephone: '', notificationSMS: false, iban: '' };
         }
       }
     );
@@ -77,6 +72,10 @@ export class HeaderComponent implements OnInit {
 
   onSign(paramSign) {
     this.router.navigate(['sign', paramSign]);
+  }
+
+  onSignUp() {
+    this.router.navigate(['user/creation']);
   }
 
 }

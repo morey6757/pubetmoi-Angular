@@ -21,6 +21,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CreationComponent } from './missions/creation/creation.component';
 import { VisualisationComponent } from './missions/visualisation/visualisation.component';
+import { UserCreationComponent } from './users/user-creation/user-creation.component';
+import { UserProfilComponent } from './users/user-profil/user-profil.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,9 @@ import { VisualisationComponent } from './missions/visualisation/visualisation.c
     MapComponent,
     SingleMissionComponent,
     CreationComponent,
-    VisualisationComponent
+    VisualisationComponent,
+    UserCreationComponent,
+    UserProfilComponent
   ],
   imports: [
     BrowserModule,
