@@ -4,6 +4,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { UsersService } from 'src/app/services/users.service';
 import { Location } from '@angular/common';
+import * as firebase from 'firebase';
+import { User } from 'src/app/interfaces/user';
 
 @Component({
   selector: 'app-user-profil',
@@ -17,7 +19,7 @@ export class UserProfilComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private params: VariablesGlobales,
+    public params: VariablesGlobales,
     private SpinnerService: NgxSpinnerService,
     private usersService: UsersService,
     private location: Location) { }
@@ -36,16 +38,35 @@ export class UserProfilComponent implements OnInit {
         dateNaissance: ['', [Validators.required]],
         notificationSms: []
       });
-    this.registerForm.setValue({
-      'titre': this.params.user.titre,
-      'nom': this.params.user.nom,
-      'prenom': this.params.user.prenom,
-      'email': this.params.user.email,
-      'telephone': this.params.user.telephone,
-      'dateNaissance': this.params.user.dateNaissance,
-      'notificationSms': this.params.user.notificationSMS,
-      'iban': this.params.user.iban
-    });
+
+    this.SpinnerService.show();
+    firebase.auth().onAuthStateChanged(
+      (userSession) => {
+        if (userSession) {
+          this.usersService.getUser(userSession.uid).then(
+            (user: User) => {
+              this.SpinnerService.hide();
+              this.registerForm.setValue({
+                'titre': user.titre,
+                'nom': user.nom,
+                'prenom': user.prenom,
+                'email': user.email,
+                'telephone': user.telephone,
+                'dateNaissance': user.dateNaissance,
+                'notificationSms': user.notificationSMS,
+                'iban': user.iban
+              });
+            }
+          ).catch(
+            (error) => {
+              this.SpinnerService.hide();
+              alert(error.code);
+            }
+          );
+        }
+      }
+    );
+
   }
 
   onSubmit() {

@@ -27,6 +27,9 @@
                         <a class="dropdown-item text-danger" (click)="onSignOut()">Déconnexion</a>
                     </div>
                 </li>
+                <li class="nav-item" *ngIf="params.isLoggedIn && !params.user.isAdmin">
+                    <a class="nav-link" (click)="onMission()">Mes Missions</a>
+                </li>
                 <li class="nav-item dropdown" *ngIf="params.isLoggedIn && !params.user.isAdmin">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown"
                         aria-haspopup="true" aria-expanded="false">

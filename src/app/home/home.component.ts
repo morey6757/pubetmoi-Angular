@@ -13,7 +13,7 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private missionsService: MissionsService,
-    private params: VariablesGlobales
+    public params: VariablesGlobales
   ) { }
 
   ngOnInit() {

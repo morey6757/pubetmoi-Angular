@@ -19,7 +19,7 @@ export class HeaderComponent implements OnInit {
   constructor(private authenticationService: AuthenticationService,
     private usersService: UsersService,
     private router: Router,
-    private params: VariablesGlobales) { }
+    public params: VariablesGlobales) { }
 
   ngOnInit() {
     firebase.auth().onAuthStateChanged(
@@ -76,6 +76,10 @@ export class HeaderComponent implements OnInit {
 
   onSignUp() {
     this.router.navigate(['user/creation']);
+  }
+
+  onMission() {
+
   }
 
 }
